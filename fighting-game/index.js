@@ -252,7 +252,7 @@ window.addEventListener('keydown', (event) => {
             enemy.velocidade.y = -15
             break
         case 'ArrowDown':
-            enemy.isAttacking = true
+            enemy.attack()
             break
     }
 
