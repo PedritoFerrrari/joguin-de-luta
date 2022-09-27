@@ -142,25 +142,39 @@ function colisaoRetangular({ retangulo1, retangulo2 }) {
 }
 
 
-
-let timer = 5
-function decreaseTimer() {
-
-    if (timer > 0) {
-        setTimeout(decreaseTimer, 1000)
-        timer--
-        document.querySelector('#timer').innerHTML = timer
-    }
-
-
+function determinarVencedor({player, enemy, timerID}){
+    clearTimeout(timerID)
+    document.querySelector('#displayText').style.display = 'flex'
     if (player.health === enemy.health) {
-        console.log('tie')
-        document.querySelector('#tietext').innetHTML = tie
-        document.querySelector('#tietext').style.display = 'flex'
+        document.querySelector('#displayText').innerHTML = 'Empate'
+    } else if (player.health > enemy.health) {
+        document.querySelector('#displayText').innerHTML = 'Player 1 Venceu!'
+    } else if (player.health < enemy.health) {
+        document.querySelector('#displayText').innerHTML = 'Player 2 Venceu!'
     }
-    decreaseTimer()  
+
+
 }
 
+let timer = 60
+let timerID
+
+function decraseTimer() {
+    
+    if (timer > 0) {
+        timerID = setTimeout(decraseTimer, 1000)
+        timer--
+        document.querySelector("#timer").innerHTML = timer
+    }
+
+    if (timer === 0) {
+        determinarVencedor({player, enemy, timerID})
+    }
+
+
+}
+
+decraseTimer()
 
 
 
@@ -214,6 +228,10 @@ function animate() {
         player.health -= 20
         document.querySelector('#playerHealth').style.width = player.health + '%'
 
+    }
+
+    if(enemy.health <= 0 || player.health <= 0){
+        determinarVencedor({player, enemy, timerID})
     }
 
 }
