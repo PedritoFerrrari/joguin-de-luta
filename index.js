@@ -9,7 +9,7 @@ c.fillRect(0, 0, canvas.width, canvas.height)
 const gravidade = 0.7
 
 class Sprite {
-    constructor({ position, imageSrc, scale = 1, framesMax = 1 }) {
+    constructor({ position, imageSrc, scale = 1, framesMax = 1, offset = { x: 0, y: 0 } }) {
         this.position = position
         this.width = 50
         this.height = 150
@@ -20,6 +20,7 @@ class Sprite {
         this.framesCurrent = 0
         this.framesElapsed = 0
         this.framesHold = 1
+        this.offset = offset
 
 
     }
@@ -31,15 +32,14 @@ class Sprite {
             0,
             this.image.width / this.framesMax,
             this.image.height,
-            this.position.x,
-            this.position.y,
+            this.position.x - this.offset.x,
+            this.position.y - this.offset.y,
             (this.image.width / this.framesMax) * this.scale,
             this.image.height * this.scale)
 
     }
 
-    update() {
-        this.draw()
+    animateFrames() {
         this.framesElapsed++
 
         if (this.framesElapsed % this.framesHold === 0) {
@@ -51,18 +51,24 @@ class Sprite {
             }
         }
     }
+
+
+    update() {
+        this.draw()
+
+    }
 }
 
-class Fighter extends Sprite{
-    constructor({position, velocidade, cor = 'red', offset, imageSrc, scale = 1, framesMax = 1 }) {
+class Fighter extends Sprite {
+    constructor({ position, velocidade, cor = 'red', imageSrc, scale = 1, framesMax = 1, offset = { x: 0, y: 0 } }) {
         super({
             position,
             imageSrc,
             scale,
-            framesMax
+            framesMax,
+            offset
         })
 
-        this.position = position
         this.velocidade = velocidade
         this.width = 50
         this.height = 150
@@ -81,25 +87,14 @@ class Fighter extends Sprite{
         this.health = 100
         this.framesCurrent = 0
         this.framesElapsed = 0
-        this.framesHold = 5
-    }
-    draw() {
-        c.fillStyle = this.cor
-        c.fillRect(this.position.x, this.position.y, this.width, this.height)
-
-        //attack box
-        if (this.isAttacking) {
-            c.fillStyle = 'yellow'
-            c.fillRect(this.attackBox.position.x,
-                this.attackBox.position.y,
-                this.attackBox.width,
-                this.attackBox.height)
-        }
+        this.framesHold = 2
 
     }
 
     update() {
         this.draw()
+        this.animateFrames()
+
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y
 
@@ -159,13 +154,13 @@ const obelisk = new Sprite({
 const player = new Fighter({
 
     position: {
-        x: 0,
-        y: 0
+        x: 400,
+        y: 100
     },
 
     velocidade: {
         x: 0,
-        y: 10
+        y: 0
     },
 
     offset: {
@@ -173,10 +168,30 @@ const player = new Fighter({
         y: 0
     },
 
-    imageSrc: './img/saas.png',
-    scale: 1,
-    framesMax: 10
-   
+    imageSrc: './img/heroIdle.png',
+    scale: 2.3,
+    framesMax: 11,
+
+    offset: {
+        x: 200,
+        y: 140
+    },
+
+    sprites: {
+
+        idle: {
+            imageSrc: './img/heroIdle.png',
+            framesMax: 11
+        },
+        
+        run: {
+            imageSrc: './img/heroRun.png',
+            framesMax: 8
+        }
+
+
+    }
+
 })
 
 const enemy = new Fighter({
@@ -192,9 +207,10 @@ const enemy = new Fighter({
     },
 
     offset: {
-        x: -50,
+        x: 0,
         y: 0
-    }
+    },
+
 })
 
 
@@ -276,7 +292,7 @@ function animate() {
     background.update()
     obelisk.update()
     player.update()
-    enemy.update()
+    // enemy.update()
 
     player.velocidade.x = 0
     enemy.velocidade.x = 0
@@ -296,7 +312,7 @@ function animate() {
         enemy.velocidade.x = 5
     }
 
-    //deyecta colisão
+    //detecta colisão
 
     if (
         colisaoRetangular({
