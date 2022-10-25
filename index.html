@@ -1,0 +1,130 @@
+<head>
+    <link href="http://fonts.cdnfonts.com/css/common-pixel" rel="stylesheet">
+                
+                
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div style="position: relative; display: inline-block;">
+
+        <div style="
+        position: absolute; 
+        display: flex; 
+        width: 100%; 
+        align-items: center;
+        padding: 20px;">
+
+            <!--player health-->
+            <div style="
+            position: relative;
+            height:30px; 
+            width:100%;
+            display: flex;
+            justify-content: flex-end;">
+                <div style="
+                background-color: #ED2939; 
+                height: 30px;
+                width: 100%;
+                border-radius: 5px;
+                border-width: 5px;
+                border-top-left-radius: 15px;
+                border-bottom-left-radius: 15px;
+                border-left: 4px solid #FF5A00;
+                border-top: 4px solid #FF5A00;
+                border-bottom: 4px solid #FF5A00;
+                width: 100%;
+                ">
+                </div>
+                <div id='playerHealth' style="
+                position: absolute; 
+                background: #009900; 
+                top: 0; 
+                right: 0; 
+                bottom: 0; 
+                left: 0;
+                border-top-left-radius: 15px;
+                border-bottom-left-radius: 15px;
+                border-left: 2px solid #FF5A00;
+                border-top: 2px solid #FF5A00;
+                border-bottom: 2px solid #FF5A00;"></div>
+            </div>
+
+            <!--timer-->
+            <div id='timer' style="
+            background-color: yellow  ;
+            width: 120px; 
+            height: 80px; 
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            font-family: 'Common Pixel', cursive;                                  
+            font-size: 33px;
+            ">
+                10
+            </div>
+
+
+            <!--enemy health-->
+            <div style="
+            position: relative;
+            height:30px; 
+            width:100%;">
+                <div style="
+                background-color: #ED2939; 
+                height: 30px;
+                border-radius: 5px;
+                border-width: 5px;
+                border-top-right-radius: 15px;
+                border-bottom-right-radius: 15px;
+                border-right: 4px solid #FF5A00;
+                border-top: 4px solid #FF5A00;
+                border-bottom: 4px solid #FF5A00;
+                
+                ">
+                </div>
+                <div id="enemyHealth" style="
+                position: absolute; 
+                background: #009900; 
+                top: 0; 
+                right: 0; 
+                bottom: 0; 
+                left: 0;
+                border-top-right-radius: 15px;
+                border-bottom-right-radius: 15px;
+                border-right: 2px solid #FF5A00;
+                border-top: 2px solid #FF5A00;
+                border-bottom: 2px solid #FF5A00;
+
+                "></div>
+            </div>
+
+            <div></div>
+        </div>
+        <div id="displayText"
+            style="
+            position: absolute; 
+            color: white; 
+            align-items: center;
+            justify-content: center;
+            font-size: medium;
+            top: 0; 
+            right: 0; 
+            bottom: 0; 
+            left: 0;
+            display: none;">Tie
+        </div>
+
+
+        <canvas></canvas>
+    </div>
+
+    <script src="index.js"></script>
+</body>
