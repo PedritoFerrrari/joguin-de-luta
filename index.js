@@ -120,9 +120,9 @@ class Fighter extends Sprite {
         } else this.velocidade.y += gravidade
     }
 
-    attack() {
+    attack1() {
 
-        trocaSprite(attack1)
+        trocaSprite('attack1')
 
         this.isAttacking = true
         setTimeout(() => {
@@ -131,19 +131,12 @@ class Fighter extends Sprite {
     }
 
 
-    attack2() {
-        this.isAttacking = true
+    trocaSprite(sprite) {
+        if (this.image === this.sprites.attack1.image && 
+        this.framesCurrent === this.sprites.attack1.framesMax - 1) 
+        return
 
-        setTimeout(() => {
-            this.isAttacking = false
-        }, 100);
-    }
-
-
-    trocaSprite(sprites) {
-        if (this.image === this.sprites.attack1.image && this.framesCurrent === this.sprites.attack1.framesMax -1) return
-
-        switch (sprites) {
+        switch (sprite) {
             case 'idle':
                 if (this.image !== this.sprites.idle.image) {
                     this.image = this.sprites.idle.image
@@ -173,16 +166,16 @@ class Fighter extends Sprite {
                     this.framesCurrent = 0
                 }
             case 'attack1':
-            if (this.image !== this.sprites.attack1.image) {
-                this.image = this.sprites.attack1.image
-                this.framesMax = this.sprites.attack1.framesMax
-                this.framesCurrent = 0
-            }
-            break
+                if (this.image !== this.sprites.attack1.image) {
+                    this.image = this.sprites.attack1.image
+                    this.framesMax = this.sprites.attack1.framesMax
+                    this.framesCurrent = 0
+                }
+                break
         }
 
+    
     }
-
 }
 
 
@@ -265,6 +258,11 @@ const player = new Fighter({
         attack1: {
             imageSrc: './img/Attack1.png',
             framesMax: 5
+        },
+
+        attack2: {
+            imageSrc: './img/Attack2.png',
+            framesMax: 5
         }
 
 
@@ -289,7 +287,42 @@ const enemy = new Fighter({
         x: 0,
         y: 0
     },
+    imageSrc: './img/pIdle.png',
+    scale: 2.2,
+    framesMax: 8,
 
+    offset: {
+        x: -310,
+        y: 250
+    },
+
+    sprites: {
+
+        idle: {
+            imageSrc: './img/pIdle.png',
+            framesMax: 10
+        },
+
+        run: {
+            imageSrc: './img/pRun.png',
+            framesMax: 8
+        },
+
+        jump: {
+            imageSrc: './img/pJump.png',
+            framesMax: 2
+        },
+
+        fall: {
+            imageSrc: './img/pFall.png',
+            framesMax: 2
+        },
+
+        attack1: {
+            imageSrc: './img/pAttack1.png',
+            framesMax: 8
+        }
+    }
 })
 
 
@@ -312,13 +345,9 @@ const keys = {
     ArrowRight: {
         pressed: false
     },
-    ArrowUp: {
-        pressed: false
+    ArrowUp:{
+        pressed:false
     }
-
-
-
-
 }
 
 // colisão
@@ -376,7 +405,7 @@ function animate() {
     background.update()
     obelisk.update()
     player.update()
-    // enemy.update()
+    enemy.update()
 
     player.velocidade.x = 0
     enemy.velocidade.x = 0
@@ -394,21 +423,29 @@ function animate() {
 
 
     //player pulo
-
-    if (player.velocidade.y - 0) {
+    if (player.velocidade.y < 0) {
         player.trocaSprite('jump')
-    } else id(player.velocidade.y + 0)
+    } else id(player.velocidade.y > 0)
     player.trocaSprite('fall')
 
-    //enemy movimento
+    //inimigo movimento
     if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
         enemy.velocidade.x = -5
+        enemy.trocaSprite('run')
     } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
         enemy.velocidade.x = 5
+    } else {
+        enemy.trocaSprite('idle')
     }
 
-    //detecta colisão
+    //inimigo pulo
+    if (enemy.velocidade.y < 0) {
+        enemy.trocaSprite('jump')
+    } else id(enemy.velocidade.y > 0)
+    enemy.trocaSprite('fall')
 
+    
+    //detecta colisão
     if (
         colisaoRetangular({
             retangulo1: player,
@@ -458,11 +495,8 @@ window.addEventListener('keydown', (event) => {
         case 'w':
             player.velocidade.y = -15
             break
-        case 'g':
+        case ' ':
             player.attack1()
-            break
-        case 'h':
-            player.attack2()
             break
     }
     //player 2/enemy
@@ -479,10 +513,7 @@ window.addEventListener('keydown', (event) => {
             enemy.velocidade.y = -15
             break
         case '1':
-            enemy.attack()
-            break
-        case '2':
-            enemy.attack()
+            enemy.attack1()
             break
     }
 
