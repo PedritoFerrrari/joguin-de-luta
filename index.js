@@ -3,9 +3,10 @@ const c = canvas.getContext('2d');
 
 canvas.width = 1218
 canvas.height = 566
-const gravidade = 0.7
 
 c.fillRect(0, 0, canvas.width, canvas.height)
+
+const gravidade = 0.7
 
 class Sprite {
     constructor({ position, imageSrc, scale = 1, framesMax = 1, offset = { x: 0, y: 0 } }) {
@@ -20,7 +21,6 @@ class Sprite {
         this.framesElapsed = 0
         this.framesHold = 5
         this.offset = offset
-
 
 
     }
@@ -52,26 +52,31 @@ class Sprite {
         }
     }
 
-
     update() {
         this.draw()
         this.animateFrames()
-
-
     }
 }
 
 class Fighter extends Sprite {
-    constructor({ position, velocidade, cor = 'red', imageSrc, scale = 1, framesMax = 1, offset = { x: 0, y: 0 }, sprites }) {
+    constructor({ position,
+        velocidade, 
+        cor = 'red', 
+        imageSrc, 
+        scale = 1,
+        framesMax = 1, 
+        offset = { x: 0, y: 0 }, 
+        sprites, 
+        attackBox = {offset: {}, width: undefined, height: undefined }}) {
         super({
             position,
             imageSrc,
             scale,
             framesMax,
-            offset,
-            sprites
-        })
+            offset
 
+        })
+        this.position = position
         this.velocidade = velocidade
         this.width = 50
         this.height = 150
@@ -81,9 +86,9 @@ class Fighter extends Sprite {
                 x: this.position.x,
                 y: this.position.y
             },
-            offset,
-            width: 100,
-            height: 50
+            offset: attackBox.offset,
+            width: attackBox.width,
+            height: attackBox.height
         }
         this.cor = cor
         this.isAttacking
@@ -98,8 +103,6 @@ class Fighter extends Sprite {
             sprites[sprite].image.src = sprites[sprite].imageSrc
         }
 
-        console.log(this.sprites)
-
 
     }
 
@@ -113,30 +116,33 @@ class Fighter extends Sprite {
         this.position.x += this.velocidade.x
         this.position.y += this.velocidade.y
 
+        c.fillRect(this.attackBox.position.x, this.attackBox.position.y, this.attackBox.width, this.attackBox.height)
+
+
         if (this.position.y + this.height + this.velocidade.y >= canvas.height - 40) {
             this.velocidade.y = 0
             this.position.y = 380
-
         } else this.velocidade.y += gravidade
+
+        console.log(this.position.y)
     }
 
     attack1() {
-
-        trocaSprite('attack1')
-
+        this.trocaSprite('attack1')
         this.isAttacking = true
+
         setTimeout(() => {
             this.isAttacking = false
         }, 100);
     }
 
-
     trocaSprite(sprite) {
-        if (this.image === this.sprites.attack1.image && 
-        this.framesCurrent === this.sprites.attack1.framesMax - 1) 
-        return
+        if (this.image === this.sprites.attack1.image &&
+            this.framesCurrent < this.sprites.attack1.framesMax - 1)
+            return
 
         switch (sprite) {
+
             case 'idle':
                 if (this.image !== this.sprites.idle.image) {
                     this.image = this.sprites.idle.image
@@ -165,6 +171,7 @@ class Fighter extends Sprite {
                     this.framesMax = this.sprites.fall.framesMax
                     this.framesCurrent = 0
                 }
+                break
             case 'attack1':
                 if (this.image !== this.sprites.attack1.image) {
                     this.image = this.sprites.attack1.image
@@ -172,14 +179,14 @@ class Fighter extends Sprite {
                     this.framesCurrent = 0
                 }
                 break
-        }
 
-    
+        }
     }
+
 }
 
 
-// background sprite
+
 const background = new Sprite({
 
     position: {
@@ -191,7 +198,6 @@ const background = new Sprite({
 
 })
 
-//objeto do background
 const obelisk = new Sprite({
 
     position: {
@@ -205,18 +211,16 @@ const obelisk = new Sprite({
 
 })
 
-//player 1 sprites
-
 const player = new Fighter({
 
     position: {
-        x: 400,
-        y: 140
+        x: 0,
+        y: 0
     },
 
     velocidade: {
         x: 0,
-        y: 0
+        y: 10
     },
 
     offset: {
@@ -225,56 +229,52 @@ const player = new Fighter({
     },
 
     imageSrc: './img/Idle.png',
-    scale: 3.0,
     framesMax: 8,
-
+    scale: 2.5,
     offset: {
-        x: 200,
-        y: 170
+        x: 50,
+        y: 130
     },
 
     sprites: {
-
         idle: {
             imageSrc: './img/Idle.png',
             framesMax: 8
         },
-
         run: {
             imageSrc: './img/Run.png',
             framesMax: 8
         },
-
         jump: {
             imageSrc: './img/Jump.png',
             framesMax: 2
         },
-
         fall: {
             imageSrc: './img/Fall.png',
             framesMax: 2
         },
-
         attack1: {
             imageSrc: './img/Attack1.png',
             framesMax: 5
-        },
-
-        attack2: {
-            imageSrc: './img/Attack2.png',
-            framesMax: 5
         }
+    },
 
+    attackBox: {
 
+        offset: {
+            x: 100,
+            y: 0
+        },
+        
+        widht: 100,
+        height: 50
     }
-
 })
 
-// player 2
 const enemy = new Fighter({
 
     position: {
-        x: 200,
+        x: 400,
         y: 100
     },
 
@@ -284,42 +284,37 @@ const enemy = new Fighter({
     },
 
     offset: {
-        x: 0,
+        x: -50,
         y: 0
     },
-    imageSrc: './img/pIdle.png',
-    scale: 2.2,
-    framesMax: 8,
 
+    imageSrc: './img/PIdle.png',
+    framesMax: 8,
+    scale: 2.0,
     offset: {
-        x: -310,
-        y: 250
+        x: 50,
+        y: 215
     },
 
     sprites: {
-
         idle: {
-            imageSrc: './img/pIdle.png',
-            framesMax: 10
-        },
-
-        run: {
-            imageSrc: './img/pRun.png',
+            imageSrc: './img/PIdle.png',
             framesMax: 8
         },
-
+        run: {
+            imageSrc: './img/PRun.png',
+            framesMax: 8
+        },
         jump: {
-            imageSrc: './img/pJump.png',
+            imageSrc: './img/PJump.png',
             framesMax: 2
         },
-
         fall: {
-            imageSrc: './img/pFall.png',
+            imageSrc: './img/PFall.png',
             framesMax: 2
         },
-
         attack1: {
-            imageSrc: './img/pAttack1.png',
+            imageSrc: './img/PAttack1.png',
             framesMax: 8
         }
     }
@@ -327,7 +322,6 @@ const enemy = new Fighter({
 
 
 console.log(player)
-
 
 const keys = {
     a: {
@@ -344,13 +338,13 @@ const keys = {
     },
     ArrowRight: {
         pressed: false
-    },
-    ArrowUp:{
-        pressed:false
     }
+
+
+
+
 }
 
-// colisão
 
 function colisaoRetangular({ retangulo1, retangulo2 }) {
     return (
@@ -361,7 +355,7 @@ function colisaoRetangular({ retangulo1, retangulo2 }) {
     )
 }
 
-// inicio/fim jogo
+
 function determinarVencedor({ player, enemy, timerID }) {
     clearTimeout(timerID)
     document.querySelector('#displayText').style.display = 'flex'
@@ -375,7 +369,7 @@ function determinarVencedor({ player, enemy, timerID }) {
 
 
 }
-//function timer
+
 let timer = 60
 let timerID
 
@@ -410,42 +404,43 @@ function animate() {
     player.velocidade.x = 0
     enemy.velocidade.x = 0
 
-    //player movimento
+    //player movement
+
     if (keys.a.pressed && player.lastKey === 'a') {
         player.velocidade.x = -5
         player.trocaSprite('run')
     } else if (keys.d.pressed && player.lastKey === 'd') {
         player.velocidade.x = 5
-        player.image = player.sprites.run.image
+        player.trocaSprite('run')
     } else {
         player.trocaSprite('idle')
     }
 
-
-    //player pulo
     if (player.velocidade.y < 0) {
         player.trocaSprite('jump')
-    } else id(player.velocidade.y > 0)
-    player.trocaSprite('fall')
+    } else if (player.velocidade.y > 0) {
+        player.trocaSprite('fall')
+    }
 
-    //inimigo movimento
+    //enemy movement
     if (keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
         enemy.velocidade.x = -5
         enemy.trocaSprite('run')
     } else if (keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
         enemy.velocidade.x = 5
+        enemy.trocaSprite('run')
     } else {
         enemy.trocaSprite('idle')
     }
 
-    //inimigo pulo
-    if (enemy.velocidade.y < 0) {
+    if (enemy.velocidade.y < 0){
         enemy.trocaSprite('jump')
-    } else id(enemy.velocidade.y > 0)
-    enemy.trocaSprite('fall')
+    } else if (enemy.velocidade.y > 0 ) {
+        enemy.trocaSprite('fall')
+    }
 
-    
     //detecta colisão
+
     if (
         colisaoRetangular({
             retangulo1: player,
@@ -479,8 +474,6 @@ function animate() {
 
 animate()
 
-//definir teclas
-
 window.addEventListener('keydown', (event) => {
     switch (event.key) {
         //player 1
@@ -498,9 +491,7 @@ window.addEventListener('keydown', (event) => {
         case ' ':
             player.attack1()
             break
-    }
-    //player 2/enemy
-    switch (event.key) {
+
         case 'ArrowRight':
             keys.ArrowRight.pressed = true
             enemy.lastKey = 'ArrowRight'
@@ -515,6 +506,7 @@ window.addEventListener('keydown', (event) => {
         case '1':
             enemy.attack1()
             break
+
     }
 
 
